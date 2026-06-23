@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<title>Meca task</title>
+</head>
+<body>
+	<div id="page-init">
+		<h1>Tarefas pendentes do 1-Meca:</h1>
+		<ul id="task-list">
+		</ul>
+		<h2 id="load-msg">Carregando as tarefas... (isso pode demorar um pouco)</h2>
+		<button id="btn-new-task">+</button>
+	</div>
+	<div id="page-form" style="display: flex; flex-direction: column;">
+		<h1>Preencha os campos abaixo:</h1>
+		<label>Titulo da tarefa</label>
+		<input id="i-task-title">
+		<label>Descrição da tarefa</label>
+		<input id="i-task-desc">
+		<label>Data de entrega</label>
+		<input type="date" id="i-task-date">
+		<div>
+			<button id="btn-send-form">></button>
+			<button id="btn-cancel-form">x</button>
+		</div>
+	</div>
+</body>
+<style>
+body {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin: 0;
+	background-color: #f5f5f5;
+}
+</style>
+<script>
+console.log("iniciando...");
+
+// --- html elements
+const page_init = document.getElementById("page-init");
+const page_form = document.getElementById("page-form");
+
+const page_list = {
+	"page-init": page_init,
+	"page-form": page_form,
+};
+
+const btn_new_task = document.getElementById("btn-new-task");
+const btn_send_form = document.getElementById("btn-send-form");
+const btn_cancel_form = document.getElementById("btn-cancel-form");
+
+const i_task_title = document.getElementById("i-task-title");
+const i_task_desc = document.getElementById("i-task-desc");
+const i_task_date = document.getElementById("i-task-date");
+
+const task_list = document.getElementById("task-list");
+const load_msg = document.getElementById("load-msg");
+
+// --- global vars
+const api = "https://script.google.com/macros/s/AKfycbxMx-8HRw3GNRX3acOmW4NZwYodxyLCbYjJcj5Er8nLnEQsfhy1KZt4gEl0LPLSnEqzEQ/exec";
+let task_count = 0
+
+// --- helpers
+function show_page(page, mode = "block") {
+	for (const [key, value] of Object.entries(page_list)) {
+		if (key === page) {
+			value.style.display = mode;
+		} else {
+			value.style.display = "none";
+		}
+	}
+}
+
+function show_task(target, title, desc, date) {
+	task_count++;
+
+	let task_div   = document.createElement("div");
+	let task_title = document.createElement("h2");
+	let task_desc  = document.createElement("p");
+	let task_date  = document.createElement("h3");
+
+	task_div.id   = `task${task_count}-div`;
+	task_title.id = `task${task_count}-title`;
+	task_desc.id  = `task${task_count}-desc`;
+	task_date.id  = `task${task_count}-date`;
+
+	task_title.innerText = `Trabalho: ${title}`;
+	task_desc.innerText  = `Descrição: ${desc}`;
+	task_date.innerText  = `Data de entrega: ${date}`;
+
+	task_div.appendChild(task_title);
+	task_div.appendChild(task_desc);
+	task_div.appendChild(task_date);
+
+	// style
+	task_div.style.backgroundColor = "#bfcade";
+	task_div.style.padding = "5px 20px";
+	task_div.style.borderRadius = "25px";
+
+	target.appendChild(task_div);
+}
+
+// --- logic
+async function load_tasks() {
+	task_list.innerHTML = "";
+	load_msg.style.display = "block";
+	let response = await fetch(api + "?route=tasks");
+	let data = await response.json();
+
+	for (let i = 1; i < data.length; i++) {
+		let row = data[i];
+		let date = new Date(row[2]);
+		date = (date.getDate() + 1) + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+		show_task(task_list, row[0], row[1], date);
+	}
+	load_msg.style.display = "none";
+}
+
+async function send_task(task_title, task_desc, task_date) {
+	let response = await fetch(api + "?route=send", {
+		method: "POST",
+		headers: {
+			"Content-Type": "text/plain;charset=utf-8",
+		},
+		body: JSON.stringify({
+			title: task_title,
+			desc: task_desc,
+			date: task_date,
+		}),
+	});
+}
+
+// --- init
+show_page("none"); // hide everthing
+// defining styles
+btn_new_task.style.fontSize = "30px";
+btn_new_task.style.borderRadius = "25px";
+btn_new_task.style.padding = "0px 10px";
+
+btn_send_form.style.fontSize = "30px";
+btn_send_form.style.borderRadius = "25px";
+btn_send_form.style.padding = "0px 10px";
+btn_send_form.style.backgroundColor = "green";
+btn_send_form.style.color = "white";
+
+btn_cancel_form.style.fontSize = "30px";
+btn_cancel_form.style.borderRadius = "25px";
+btn_cancel_form.style.padding = "0px 10px";
+btn_cancel_form.style.backgroundColor = "red";
+btn_cancel_form.style.color = "white";
+
+// setup page
+show_page("page-init");
+
+btn_new_task.addEventListener("click", () => {
+	show_page("page-form", "flex");
+});
+
+btn_cancel_form.addEventListener("click", () => {
+	show_page("page-init");
+});
+
+btn_send_form.addEventListener("click", async () => {
+	let task_title = i_task_title.value;
+	let task_desc = i_task_desc.value;
+	let task_date = i_task_date.value;
+
+	i_task_title.value = "";
+	i_task_desc.value = "";
+	i_task_date.value = "";
+
+	alert("enviando isso pode demorar um pouco");
+	try {
+		await send_task(task_title, task_desc, task_date);
+		show_page("page-init");
+		await load_tasks();
+	}
+	catch (err) {
+		alert("erro ao enviar :(");
+		alert(err);
+	}
+});
+load_tasks();
+</script>
+</html>
