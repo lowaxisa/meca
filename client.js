@@ -63,4 +63,6 @@ dom.fm.isendf.addEventListener("click", async () => {
 		alert(err);
 	}
 });
-load_tasks();
+window.addEventListener("DOMContentLoaded", () => {
+	load_tasks();
+}
