@@ -6,6 +6,7 @@ export const dom = {
 		flist: dget("it-flist"),
 		msgload: dget("it-msgload"),
 		inewf: dget("it-inewf"),
+		ireloadf: dget("it-ireloadf"),
 	},
 	fm: {
 		page: dget("page-form"),

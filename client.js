@@ -1,5 +1,9 @@
 console.log("iniciando...");
 
+window.onerror = (msg, url, line) => {
+	alert(`O erro "${msg}" ocorreu na linha ${line}`);
+};
+
 // --- imports
 import { dom } from './tools/dlink.js';
 import { send, recive } from './tools/api.js';
@@ -63,6 +67,19 @@ dom.fm.isendf.addEventListener("click", async () => {
 		alert(err);
 	}
 });
-window.addEventListener("DOMContentLoaded", () => {
-	load_tasks();
+
+dom.it.ireloadf.addEventListener("click", async () => {
+	dom.it.ireloadf.disabled = true;
+	dom.it.ireloadf.style.opaticy = "0.5";
+	await load_tasks();
+	dom.it.ireloadf.disabled = false;
+	dom.it.ireloadf.style.opacity = "1.0";
+});
+
+window.addEventListener("DOMContentLoaded", async () => {
+	dom.it.ireloadf.disabled = true;
+	dom.it.ireloadf.style.opaticy = "0.5";
+	await load_tasks();
+	dom.it.ireloadf.disabled = false;
+	dom.it.ireloadf.style.opacity = "1.0";
 });

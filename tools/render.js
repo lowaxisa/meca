@@ -52,22 +52,9 @@ export function show_task(target, title, desc, date) {
 
 // --- init
 show_page("none"); // hide everthing
+
 // defining styles
-dom.it.inewf.style.fontSize = "140px";
-dom.it.inewf.style.borderRadius = "50px";
-dom.it.inewf.style.padding = "0px 40px";
-
-dom.fm.isendf.style.fontSize = "120px";
-dom.fm.isendf.style.borderRadius = "50px";
-dom.fm.isendf.style.padding = "0px 40px";
-dom.fm.isendf.style.backgroundColor = "green";
-dom.fm.isendf.style.color = "white";
-
-dom.fm.icancelf.style.fontSize = "120px";
-dom.fm.icancelf.style.borderRadius = "50px";
-dom.fm.icancelf.style.padding = "0px 40px";
+dom.fm.isendf.style.backgroundColor   = "green";
 dom.fm.icancelf.style.backgroundColor = "red";
-dom.fm.icancelf.style.color = "white";
 
-// setup page
 show_page("page-init");
