@@ -57,7 +57,7 @@ function show_task(target, title, desc, date) {
 // --- logic
 async function load_tasks() {
 	dom.it.flist.innerHTML = "";
-	dom.it.loadmsg.style.display = "block";
+	dom.it.msgload.style.display = "block";
 	let response = await recive(api, "?route=tasks");
 	let data = await response.json();
 
