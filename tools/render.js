@@ -56,8 +56,8 @@ export function show_task(target, title, desc, date) {
 	task_desc.id  = `task${task_count}-desc`;
 	task_date.id  = `task${task_count}-date`;
 
-	task_title.innerHTML = `Trabalho: ${title}`;
-	task_date.innerHTML = `Data de entrega: ${date}`;
+	task_title.innerText = `Trabalho: ${title}`;
+	task_date.innerText = `Data de entrega: ${date}`;
 
 	task_div.appendChild(task_title);
 	task_div.appendChild(task_desc);
@@ -97,7 +97,7 @@ export function show_task(target, title, desc, date) {
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removetitletemplate") {
-					task_title.innerHTML = title;
+					task_title.innerText = title;
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removedesctemplate") {
@@ -105,7 +105,7 @@ export function show_task(target, title, desc, date) {
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removedatetemplate") {
-					task_date.innerHTML = date;
+					task_date.innerText = date;
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "setfont=") {
@@ -126,9 +126,9 @@ export function show_task(target, title, desc, date) {
 	}
 
 	if (!removedesctemplate) {
-		task_desc.innerHTML = `Descrição: ${acc}`;
+		task_desc.innerText = `Descrição: ${acc}`;
 	} else {
-		task_desc.innerHTML = acc;
+		task_desc.innerText = acc;
 	}
 }
 
