@@ -37,42 +37,47 @@ export function show_page(page, mode = "block") {
 	}
 }
 
-export function show_task(target, title, desc, date) {
+export function show_task(target, name, desc, date) {
 	task_count++;
 
-	let task_div   = document.createElement("div");
-	let task_title = document.createElement("h2");
-	let task_desc  = document.createElement("p");
-	let task_date  = document.createElement("h3");
+	let fcomp  = document.createElement("div");
+	let fname = document.createElement("h2");
+	let fdesc = document.createElement("p");
+	let fdate = document.createElement("h3");
 
 	let felements = {
-		title: task_title,
-		desc: task_desc,
-		date: task_date,
+		name: fname,
+		desc: fdesc,
+		date: fdate,
 	};
 
-	task_div.id   = `task${task_count}-div`;
-	task_title.id = `task${task_count}-title`;
-	task_desc.id  = `task${task_count}-desc`;
-	task_date.id  = `task${task_count}-date`;
+	let fappendlist = [
+		fname,
+		fdesc,
+		fdate,
+	];
 
-	task_title.innerText = `Trabalho: ${title}`;
-	task_date.innerText = `Data de entrega: ${date}`;
+	fcomp.id = `task${task_count}-comp`;
+	fname.id = `task${task_count}-name`;
+	fdesc.id = `task${task_count}-desc`;
+	fdate.id = `task${task_count}-date`;
 
-	task_div.appendChild(task_title);
-	task_div.appendChild(task_desc);
-	task_div.appendChild(task_date);
-	target.appendChild(task_div);
+	fname.innerText = `Trabalho: ${name}`;
+	fdate.innerText = `Data de entrega: ${date}`;
 
 	// style
-	task_div.classList.add("it-fc1");
-	task_div.style.backgroundColor = "#bfcade";
-	task_div.style.padding = "5px 20px";
-	task_div.style.borderRadius = "25px";
-	task_div.style.marginBottom = "15px";
+	fcomp.classList.add("it-fc1");
+	fcomp.style.backgroundColor = "#bfcade";
+	fcomp.style.padding         = "5px 20px";
+	fcomp.style.borderRadius    = "25px";
+	fcomp.style.marginBottom    = "15px";
+
+	target.appendChild(fcomp);
 
 	// parser
 	let acc = "";
+	let descchanged = false;
+	let descnum = 0;
 	let removedesctemplate = false;
 
 	for (let i = 0; i < desc.length; i++) {
@@ -91,13 +96,29 @@ export function show_task(target, title, desc, date) {
 						}
 					}
 				};
+				const update_desc = () => {
+					if (descchanged) {
+						fdesc.innerText = acc;
+						fappendlist.splice(fappendlist.length - 2, 0, fdesc);
+						fdesc = document.createElement("p");
+						fdesc.id = `task${task_count}-desc${descnum}`;
+						descnum += 1; acc = "";
+					} else {
+						if (!removedesctemplate) {
+							fdesc.innerText = `Descrição: ${acc}`;
+						} else { fdesc.innerText = acc; } acc = "";
+						descchanged = true;
+						fappendlist.splice(fappendlist.length - 2, 0, fdesc);
+						fdesc = document.createElement("p");
+					}
+				};
 				cmd_acc += desc[j];
 				if (cmd_acc === "\\") {
 					acc += "\\";
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removetitletemplate") {
-					task_title.innerText = title;
+					fname.innerText = name;
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removedesctemplate") {
@@ -105,17 +126,66 @@ export function show_task(target, title, desc, date) {
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "removedatetemplate") {
-					task_date.innerText = date;
+					fdate.innerText = date;
 					i = j + 1;
 					break;
 				} else if (cmd_acc === "setfont=") {
 					let splited = get_parameter().split(","); // target, font
-					felements[splited[0]].style.fontFamily = splited[1];
+					if (splited[0] in felements) {
+						felements[splited[0]].style.fontFamily = splited[1];
+					}
 					i = j;
 					break;
 				} else if (cmd_acc === "setchar=") {
 					let splited = get_parameter().split(",");
-					felements[splited[0]].style.fontSize = `${calc_charsize(felements[splited[0]], task_div.clientWidth, parseInt(splited[1], 10))}px`;
+					if (splited[0] in felements) {
+						felements[splited[0]].style.fontSize = `${calc_charsize(felements[splited[0]], fcomp.clientWidth * 0.4, parseInt(splited[1], 10))}px`;
+					}
+					i = j;
+					break;
+				} else if (cmd_acc === "img=") {
+					let url = get_parameter();
+					let img = document.createElement("img");
+					img.src = url;
+					fappendlist.splice(fappendlist.length - 1, 0, img);
+					update_desc();
+					i = j;
+					break;
+				} else if (cmd_acc === "link=") {
+					let splited = get_parameter().split(",");
+					let link = document.createElement("a");
+					link.href = splited[0];
+					link.innerText = splited[1];
+					fappendlist.splice(fappendlist.length - 1, 0, link);
+					update_desc();
+					i = j;
+					break;
+				} else if (cmd_acc === "video=") {
+					let url = get_parameter();
+					let video = document.createElement("video");
+					video.src = url;
+					video.controls = true;
+					video.muted = true;
+					video.style.width = "90%";
+					fappendlist.splice(fappendlist.length - 1, 0, video);
+					update_desc();
+					i = j;
+					break;
+				} else if (cmd_acc === "youtube=") {
+					let url = get_parameter();
+					let youtube = document.createElement("iframe");
+
+					if (url.includes("watch?v=")) {
+						url = url.replace("watch?v=", "embed/");
+					}
+
+					youtube.src = url;
+					youtube.style.width = "90%";
+					youtube.style.height = "400px";
+					youtube.allowfullscreen = true;
+
+					fappendlist.splice(fappendlist.length - 1, 0, youtube);
+					update_desc();
 					i = j;
 					break;
 				}
@@ -125,10 +195,15 @@ export function show_task(target, title, desc, date) {
 		}
 	}
 
-	if (!removedesctemplate) {
-		task_desc.innerText = `Descrição: ${acc}`;
+	if (!removedesctemplate && !descchanged) {
+		fdesc.innerText = `Descrição: ${acc}`;
 	} else {
-		task_desc.innerText = acc;
+		fdesc.innerText = acc;
+		fappendlist.splice(fappendlist.length - 1, 0, fdesc);
+	}
+
+	for (let element of fappendlist) {
+		fcomp.appendChild(element);
 	}
 }
 
