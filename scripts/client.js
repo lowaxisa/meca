@@ -21,16 +21,29 @@ async function loadf() {
 	loadf_initiated = true;
 	dom.it.flist.innerHTML = "";
 	dom.it.msgload.style.display = "block";
-	let response = await recive(api, "?route=tasks");
-	let data = await response.json();
+  dom.it.msgload.innerText = "Carregando as tarefas... (isso pode demorar um pouco)";
+  try {
+    let response = await fetch(api + "?route=tasks");
 
-	for (let i = data.length - 1; i >= 1; i--) {
-		let row = data[i];
-		let date = new Date(row[2]);
-		date = (date.getDate() + 1) + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+    if (!response.ok) {
+      throw new Error(`status ${response.status}`);
+    }
 
-		show_task(dom.it.flist, row[0], row[1], date);
-	}
+    let data = await response.json();
+
+    for (let i = data.length - 1; i >= 1; i--) {
+      let row = data[i];
+      let date = new Date(row[2]);
+      date = (date.getDate() + 1) + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+      show_task(dom.it.flist, row[0], row[1], date);
+    }
+  } catch(err) {
+    dom.it.msgload.innerText = `O banco de dados parece estar fora de ar, tente novamente mais tarde. Erro: ${err}`;
+    loadf_initiated = false;
+    return;
+  }
+
 	dom.it.msgload.style.display = "none";
 	loadf_initiated = false;
 }
