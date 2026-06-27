@@ -11,14 +11,13 @@ import { send, recive } from "./tools/api.js";
 import { show_page, show_task } from "./tools/render.js";
 
 // --- global var
-const api = "https://script.google.com/macros/s/AKfycbyTISnQApFpo8px66BYwE5edVzVMsGulvXlZSicLksw8pkLX0zmfQRgHSwG075MKhLFcg/exec";
+const api = "https://script.google.com/macros/s/AKfycbw3VN2sSD4feBDMXuIDDkVvNb6Z42WmEq5pB3gW3U95AQQ8Yc9iw3LkT4q3S7MkcLd-Yg/exec";
 
-// --- state var
 let loadf_initiated = false;
 
 // --- logic
 async function loadf() {
-	loadf_initiated = true;
+	loadf_initiated = 
 	dom.it.flist.innerHTML = "";
 	dom.it.msgload.style.display = "block";
   dom.it.msgload.innerText = "Carregando as tarefas... (isso pode demorar um pouco)";
