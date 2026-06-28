@@ -20,7 +20,6 @@ function calc_charsize(element, width, num_char) {
 
 // --- logic
 export function draw_form(target, name, desc, date) {
-    if (!name && !desc && !date) return;
     if (!name && !desc) return;
     if (!date) date = "A data de entrega não definida";
 
@@ -188,7 +187,7 @@ export function draw_form(target, name, desc, date) {
         return;
     }
 
-    if (!descchanged && !acc) {
+    if (!name && !descchanged && !acc) {
         fcomp.remove();
         return;
     }
