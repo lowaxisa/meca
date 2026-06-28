@@ -32,7 +32,7 @@ async function loadf() {
 		    let date = new Date(row[2]);
             date.setDate(date.getDate() + 1);
 
-		    date = (isNaN(date.getTime())) ? "Sem data definida" : date.toLocaleDateString("pt-BR");
+		    date = (isNaN(date.getTime())) ? null : date.toLocaleDateString("pt-BR");
     		try {
                 sdraw.form(spike.home.list, row[0], row[1], date);
             } catch(err) {}

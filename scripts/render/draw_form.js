@@ -21,6 +21,8 @@ function calc_charsize(element, width, num_char) {
 // --- logic
 export function draw_form(target, name, desc, date) {
     if (!name && !desc && !date) return;
+    if (!name && !desc) return;
+    if (!date) date = "A data de entrega não definida";
 
 	let fcomp  = document.createElement("div");
 	let fname = document.createElement("h2");
@@ -133,11 +135,7 @@ export function draw_form(target, name, desc, date) {
                         i = j;
                         break;
                     } else if (cmd_acc === "link=") {
-                        let args = get_parameter();
-                        if (args === null) {
-                            throw new Error("error");
-                        }
-                        let splited = args.split(",");
+                        let splited = get_parameter().split(",");
                         if (!splited[0].startsWith("https://")) {
                             throw new Error("error");
                         }
@@ -186,6 +184,11 @@ export function draw_form(target, name, desc, date) {
             }
         }
     } catch (err) {
+        fcomp.remove();
+        return;
+    }
+
+    if (!descchanged && !acc) {
         fcomp.remove();
         return;
     }
