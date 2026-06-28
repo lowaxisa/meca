@@ -25,7 +25,6 @@ export function boot() {
 	spike.home.h1.innerText = "Tarefas pendentes do 1-Meca:";
 	spike.home.load.innerText = "Carregando as tarefas... (isso pode demorar um pouco)";
 	spike.home.img.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShK42odeWlYQOSuNWda_jDTdwqPxURslx_7w7LHLooQQ&s=10";
-	spike.home.version.innerText = "v1.1.2 fixed (em update)";
 	spike.home.div2.classList.add("div1");
 	spike.home.reload.classList.add("input1");
 	spike.home.new.classList.add("input1");

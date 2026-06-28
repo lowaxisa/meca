@@ -1,25 +1,25 @@
 console.log("iniciando...");
 
-// --- error debug
-window.onerror = (msg, url, line) => {
-	alert(`O erro "${msg}" ocorreu na linha ${line}`);
-};
 
-// --- imports
+
+// --- imports, independent imports
 import {spike} from "./data.js";
-import {send, recive} from "./tools/api.js";
+import {api} from "./api.js";
+
+// dependent imports
+import {boot} from "./boot.js"; boot();
+import {sdraw} from "./render/sdraw.js"; sdraw.page("load");
+import {init} from "./apps/umbrella.js"; init();
+
+// old
 import {show_task} from "./tools/render.js";
-import {boot} from "./boot.js";
-import {sdraw} from "./render/sdraw.js";
 
-boot();
-sdraw.page("load");
 
-// --- global var
-const api = "https://script.google.com/macros/s/AKfycbw3VN2sSD4feBDMXuIDDkVvNb6Z42WmEq5pB3gW3U95AQQ8Yc9iw3LkT4q3S7MkcLd-Yg/exec";
 
 // --- state var
 let loadf_initiated = false;
+
+
 
 // --- logic
 async function loadf() {
@@ -28,7 +28,7 @@ async function loadf() {
 	spike.home.load.style.display = "block";
   spike.home.load.innerText = "Carregando as tarefas... (isso pode demorar um pouco)";
   try {
-    let response = await fetch(api + "?route=comp_form");
+    let response = await api.receive("?route=comp_form");
 
     if (!response.ok) {
       throw new Error(`status ${response.status}`);
@@ -59,7 +59,7 @@ async function sendf(task_title, task_desc, task_date) {
 		desc: task_desc,
 		date: task_date,
 	});
-	let response = await send(api, "?route=comp_send", src);
+	let response = await api.send("?route=comp_send", src);
 }
 
 // --- event listener
@@ -109,4 +109,3 @@ window.addEventListener("DOMContentLoaded", async () => {
 	spike.home.reload.style.opacity = "1.0";
 });
 
-sdraw.page("home");
